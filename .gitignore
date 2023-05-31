@@ -1,0 +1,27 @@
+####
+# Django 
+####
+*.log
+*.pot
+*.pyc
+__pycache__/
+
+####
+# Environments
+####
+.venv/
+venv/
+env/
+
+####
+# Unit Test & 
+# Coverage Reports
+####
+htmlcov/
+.coverage
+.pytest_cache
+
+####
+# IDE VS Code
+####
+.vscode
