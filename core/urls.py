@@ -16,8 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+# Project Base Import for URL Settings of MEDIA
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
-    path('', include('store.urls', namespace='home')),
+    path('', include('store.urls', namespace='store')),
+    path('basket/', include('basket.urls', namespace='basket')),
     path('admin/', admin.site.urls),
 ]
+
+# Project Base URL Settings of MEDIA
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)

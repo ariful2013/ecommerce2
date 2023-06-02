@@ -1,0 +1,109 @@
+{% extends '../../base.html' %}
+
+{% block title %}
+  Basket Summary
+{% endblock %}
+
+{% block content %}
+  <div class="container py-3">
+    {% if basket %}
+      <h1 id="basket_title" class="h5">My Basket Summary</h1>
+    {% else %}
+      <h1 id="basket_title" class="h5">No Item Added on Basket</h1>
+    {% endif %}
+
+    {% for item in basket %}
+      {% with item.product as product %}
+        <div data-index="{{ product.id }}" class="row mb-4 border product-item p-2">
+          <div class="col-md-3 col-lg-2 order-md-first bg-light">
+            <div class="card-img-top object-fit-contain overflow-hidden" style="height:125px">
+              <img class="mx-auto d-block" height="125px" width="120px" alt="Responsive image" src="{{ product.image.url }}" />
+            </div>
+          </div>
+          <div class="col-md-9 col-lg-10 ps-md-3 ps-lg-10 p-2">
+            <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-reset"><h1 class="h5 pt-2">{{ product.title }}</h1></a>
+            <div class="border">
+              <div class="col border-bottom">
+                <div class="row p-3">
+                  <div class="col-6">Hardback Book</div>
+                  <div class="col-6 text-end">
+                    <span class="h6 fw-bold">£{{ product.price }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="row p-3">
+                  <div class="col-12">
+                    <label for="select{{ product.id }}">Qty</label>
+                    <select id="select{{ product.id }}" class="form-select-sm align-middle">
+                      <option selected>{{ item.qty }}</option>
+                      <option value="">1</option>
+                      <option value="">2</option>
+                      <option value="">3</option>
+                      <option value="">4</option>
+                    </select>
+
+                    <button type="button" id="update-button" data-index="{{ product.id }}" class="btn btn-outline-success btn-sm update-button">Update</button>
+                    <button type="button" id="delete-button" data-index="{{ product.id }}" class="btn btn-outline-danger btn-sm delete-button">Delete</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endwith %}
+    {% endfor %}
+    <div class="col-12 text-end">
+      <div class="h6 fw-bold">
+        Sub Total: £<div id="subtotal" class="d-inline-flex">{{ basket.get_total_price }}</div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    $(document).on('click', '.delete-button', function (e) {
+      e.preventDefault()
+      var product_id = $(this).data('index')
+      $.ajax({
+        type: 'POST',
+        url: '{% url "basket:basket_delete" %}',
+        data: {
+          productid: $(this).data('index'),
+          csrfmiddlewaretoken: '{{csrf_token}}',
+          action: 'post'
+        },
+        success: function (json) {
+          $('.product-item[data-index="' + product_id + '"]').remove()
+          document.getElementById('subtotal').innerHTML = json.subtotal
+          document.getElementById('basket_qty').innerHTML = json.qty
+          if (json.qty == 0) {
+            document.getElementById('basket_title').innerHTML = 'No Item Added on Basket'
+          }
+        },
+        error: function (xhr, errmsg, err) {
+          console.log(err)
+        }
+      })
+    })
+    
+    $(document).on('click', '.update-button', function (e) {
+      e.preventDefault()
+      var product_id = $(this).data('index')
+      $.ajax({
+        type: 'POST',
+        url: '{% url "basket:basket_update" %}',
+        data: {
+          productid: $(this).data('index'),
+          productqty: $('#select' + product_id + ' option:selected').text(),
+          csrfmiddlewaretoken: '{{csrf_token}}',
+          action: 'post'
+        },
+        success: function (json) {
+          document.getElementById('basket_qty').innerHTML = json.qty
+          document.getElementById('subtotal').innerHTML = json.subtotal
+        },
+        error: function (xhr, errmsg, err) {}
+      })
+    })
+  </script>
+{% endblock %}
