@@ -1,0 +1,57 @@
+{% extends '../../base.html' %}
+
+{% block title %}
+  Edit Profile
+{% endblock %}
+
+{% block content %}
+  <div class="container py-3">
+    <div class="row">
+      <div class="col-12 col-lg-7 mx-auto">
+        {% url 'account:edit_details' as url_edit_details %}
+        <form class="account-form p-4 rounded col-lg-10 mx-auto" action="{{ url_edit_details }}" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          <h3 class="mb-2 font-weight-bold">Edit Your Profile</h3>
+          <p>You can edit your account using the following form:</p>
+
+          {% if user_form.is_valid %}
+            <div class="alert alert-success" role="alert">Profile Updated</div>
+          {% else %}
+
+          {% endif %}
+
+          {% if user_form.errors %}
+            <div class="alert alert-danger" role="alert">Error: Please try again !</div>
+          {% endif %}
+
+          {% for field in user_form %}
+            <div class="form-floating mb-1">
+              {{ field }}
+
+              <label for="{{ field.name }}">{{ field.label }}</label>
+            </div>
+          {% endfor %}
+
+          <button class="btn btn-primary w-100 py-2 my-2" type="submit">Save Changes</button>
+        </form>
+
+        {% url 'account:delete_user' as url_delete_user %}
+        <form class="account-form p-4 rounded col-lg-10 mx-auto" action="{{ url_delete_user }}" method="post">
+          {% csrf_token %}
+
+          <h3 class="mb-2 font-weight-bold">Delete Account</h3>
+          <p>Are you sure to delete your account !!!</p>
+
+          <button class="btn btn-danger w-100 py-2 my-2" type="submit">Delete</button>
+        </form>
+
+        <p class="text-center my-2">
+          {% url 'account:dashboard' as url_dashboard %}
+          <a href="{{ url_dashboard }}">Back to Dashboard</a>
+        </p>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript"></script>
+{% endblock %}
