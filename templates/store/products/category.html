@@ -1,0 +1,36 @@
+{% extends '../../base.html' %}
+
+{% block title %}
+  {% if category.name %}
+    {{ category.name }}
+  {% else %}
+    Products
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  <div class="container py-3">
+    <h3 class="h3 mb-3">Search Results for Category-" {{ category.name|title }} "</h3>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+      {% for product in products %}
+        <div class="col">
+          <div class="card h-100">
+            <div class="card-img-top object-fit-contain overflow-hidden" style="height:225px">
+              <a href="{{ product.get_absolute_url }}" class="text-decoration-none"><img src="{{ product.image.url }}" width="100%" alt="product" /></a>
+            </div>
+            <div class="card-body">
+              <a href="{{ product.get_absolute_url }}" class="text-decoration-none d-block"><h3 class="card-title">{{ product.title }}</h3></a>
+              <p class="card-text">{{ product.description|truncatechars:100 }}</p>
+            </div>
+            <div class="card-footer">
+              <div class="d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-sm btn-primary">Add to Cart</button>
+                <small class="text-body-secondary">9 mins</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}

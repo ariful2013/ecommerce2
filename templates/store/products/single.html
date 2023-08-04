@@ -1,0 +1,76 @@
+{% extends '../../base.html' %}
+{% load static %}
+
+{% block title %}
+  {{ product.title }}
+{% endblock %}
+
+{% block content %}
+  <div class="container py-3">
+    <div class="row g-3">
+      <div class="col-md-5 col-lg-5 order-md-first bg-light">
+        <img src="{{ product.image.url }}" class="img-fluid mx-auto d-block" />
+      </div>
+
+      <div class="col-md-7 col-lg-7 ps-md-3 ps-lg-5">
+        <h1 class="mb-0 h4">{{ product.title }}</h1>
+        <p>
+          <span class="lead">{{ product.author }}</span>
+          (Author)
+        </p>
+        <p>{{ product.description|slice:':355' }} ...</p>
+
+        <div class="border">
+          <div class="col border-bottom">
+            <div class="row p-3">
+              <div class="col-6">Hardback</div>
+              <div class="col-6 text-end">
+                <span class="h4 fw-bold">£{{ product.price }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="row p-3">
+              <div class="col-6">
+                <div class="input-group mb-3">
+                  <label class="input-group-text" for="qty_id">Qty</label>
+                  <select id="qty_id" class="form-select form-select-sm">
+                    <option selected value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-6 text-end">
+                <button id="add-to-basket" value="{{ product.id }}" type="button" class="btn btn-primary btn-sm">Add to Basket</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    $(document).on('click', '#add-to-basket', function (e) {
+      e.preventDefault()
+      $.ajax({
+        type: 'POST',
+        url: '{% url "basket:basket_add" %}',
+        data: {
+          productid: $('#add-to-basket').val(),
+          productqty: $('#qty_id option:selected').text(),
+          csrfmiddlewaretoken: '{{csrf_token}}',
+          action: 'post'
+        },
+        success: function (json) {
+          console.log(json)
+          document.getElementById('basket_qty').innerHTML = json.qty
+        },
+        error: function (xhr, errmsg, err) {
+          console.log(err)
+        }
+      })
+    })
+  </script>
+{% endblock %}

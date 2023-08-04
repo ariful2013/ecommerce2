@@ -1,0 +1,30 @@
+{% extends '../../base.html' %}
+
+{% block title %}
+  Reset Status
+{% endblock %}
+
+{% block content %}
+  {% if request.user.is_authenticated %}
+    <script>
+      window.location.href = '{% url "account:dashboard" %}'
+    </script>
+  {% endif %}
+
+  <div class="container py-3">
+    <div class="row">
+      <div class="col-12 col-lg-7 mx-auto">
+        {% if 'email' in request.get_full_path %}
+          <h3 class="mb-4">Password Reset Success</h3>
+          <p>Check your email for instructions</p>
+        {% endif %}
+        {% if 'complete' in request.get_full_path %}
+          <h3 class="mb-4">Password Reset Success</h3>
+          {% url 'account:login' as url_login %}
+          <a href="{{ url_login }}">Login Now</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript"></script>
+{% endblock %}
