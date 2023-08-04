@@ -6,56 +6,98 @@
 
 {% block content %}
   <div class="container py-3">
-    {% if basket %}
-      <h1 id="basket_title" class="h5">My Basket Summary</h1>
-    {% else %}
-      <h1 id="basket_title" class="h5">No Item Added on Basket</h1>
-    {% endif %}
+    <div class="row">
+      {% if basket %}
+        <h1 id="basket_title" class="h5">Your Basket</h1>
+        <p>
+          Manage your <b>items</b> in your basket
+        </p>
+      {% else %}
+        <h1 id="basket_title" class="h5">No Item Added on Basket</h1>
+      {% endif %}
+    </div>
 
-    {% for item in basket %}
-      {% with item.product as product %}
-        <div data-index="{{ product.id }}" class="row mb-4 border product-item p-2">
-          <div class="col-md-3 col-lg-2 order-md-first bg-light">
-            <div class="card-img-top object-fit-contain overflow-hidden" style="height:125px">
-              <img class="mx-auto d-block" height="125px" width="120px" alt="Responsive image" src="{{ product.image.url }}" />
-            </div>
-          </div>
-          <div class="col-md-9 col-lg-10 ps-md-3 ps-lg-10 p-2">
-            <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-reset"><h1 class="h5 pt-2">{{ product.title }}</h1></a>
-            <div class="border">
-              <div class="col border-bottom">
-                <div class="row p-3">
-                  <div class="col-6">Hardback Book</div>
-                  <div class="col-6 text-end">
-                    <span class="h6 fw-bold">£{{ product.price }}</span>
-                  </div>
-                </div>
-              </div>
-              <div class="col">
-                <div class="row p-3">
-                  <div class="col-12">
-                    <label for="select{{ product.id }}">Qty</label>
-                    <select id="select{{ product.id }}" class="form-select-sm align-middle">
-                      <option selected>{{ item.qty }}</option>
-                      <option value="">1</option>
-                      <option value="">2</option>
-                      <option value="">3</option>
-                      <option value="">4</option>
-                    </select>
+    <div class="row bg-light p-3 d-flex justify-content-between">
+      <div class="d-flex d-flex-inline">
+        <div class="pe-3">Order</div>
+        <div class="dropdown">
+          <a class="text-reset text-decoration-none dropdown-toggle" href="#" role="link" id="dropdownLink" data-bs-toggle="dropdown" aria-expanded="false">Shipping options</a>
 
-                    <button type="button" id="update-button" data-index="{{ product.id }}" class="btn btn-outline-success btn-sm update-button">Update</button>
-                    <button type="button" id="delete-button" data-index="{{ product.id }}" class="btn btn-outline-danger btn-sm delete-button">Delete</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <ul class="dropdown-menu" aria-labelledby="dropdownLink">
+            <li class="dropdown-item small">
+              <a class="text-decoration-none" href="#">Next day delivery</a>
+            </li>
+            <li class="dropdown-item small">
+              <a class="text-decoration-none" href="#">Premimum delivery</a>
+            </li>
+          </ul>
         </div>
-      {% endwith %}
-    {% endfor %}
-    <div class="col-12 text-end">
-      <div class="h6 fw-bold">
-        Sub Total: £<div id="subtotal" class="d-inline-flex">{{ basket.get_total_price }}</div>
+      </div>
+      <div class="text-end">
+        <div class="pt-2">
+          Sub Total: <span class="fw-bold h5">£</span><span id="subtotal" class="fw-bold h5">{{ basket.get_subtotal_price }}</span>
+        </div>
+
+        <div id="">
+          Shipping <span class="small">(Next day delivery)</span>: <span class="fw-bold">£11.50</span>
+        </div>
+        <div class="pt-2">
+          Total to pay: <span class="fw-bold h4">£</span><span id="total" class="fw-bold h4">{{ basket.get_total_price }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row py-3">
+      <div class="col-md-5 col-lg-4 text-end order-md-last order-2">
+        <div class="d-grid gap-2">
+          {% url 'payment:basket' as url_basket_payment %}
+          <a role="button" href="{{ url_basket_payment }}" class="btn btn-success fw-bold" type="button">Checkout</a>
+          <button class="btn btn-info" type="button">Save for later</button>
+        </div>
+      </div>
+
+      <div class="col-md-7 col-lg-8 order-1">
+        {% for item in basket %}
+          {% with item.product as product %}
+            <div data-index="{{ product.id }}" class="row mb-4 border product-item p-2">
+              <div class="col-md-3 col-lg-2 order-md-first bg-light">
+                <div class="card-img-top object-fit-contain overflow-hidden" style="height:125px">
+                  <img class="mx-auto d-block" height="125px" width="120px" alt="Responsive image" src="{{ product.image.url }}" />
+                </div>
+              </div>
+              <div class="col-md-9 col-lg-10 ps-md-3 ps-lg-10 p-2">
+                <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-reset"><h1 class="h5 pt-2">{{ product.title }}</h1></a>
+                <div class="border">
+                  <div class="col border-bottom">
+                    <div class="row p-3">
+                      <div class="col-6">Hardback Book</div>
+                      <div class="col-6 text-end">
+                        <span class="h6 fw-bold">£{{ product.price }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="row p-3">
+                      <div class="col-12">
+                        <label for="select{{ product.id }}">Qty</label>
+                        <select id="select{{ product.id }}" class="form-select-sm align-middle">
+                          <option class="fw-bold" selected>{{ item.qty }}</option>
+                          <option value="">1</option>
+                          <option value="">2</option>
+                          <option value="">3</option>
+                          <option value="">4</option>
+                        </select>
+
+                        <button type="button" id="update-button" data-index="{{ product.id }}" class="btn btn-outline-success btn-sm update-button">Update</button>
+                        <button type="button" id="delete-button" data-index="{{ product.id }}" class="btn btn-outline-danger btn-sm delete-button">Delete</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endwith %}
+        {% endfor %}
       </div>
     </div>
   </div>
@@ -74,8 +116,9 @@
         },
         success: function (json) {
           $('.product-item[data-index="' + product_id + '"]').remove()
-          document.getElementById('subtotal').innerHTML = json.subtotal
           document.getElementById('basket_qty').innerHTML = json.qty
+          document.getElementById('subtotal').innerHTML = json.subtotal
+          document.getElementById('total').innerHTML = json.total
           if (json.qty == 0) {
             document.getElementById('basket_title').innerHTML = 'No Item Added on Basket'
           }
@@ -101,6 +144,7 @@
         success: function (json) {
           document.getElementById('basket_qty').innerHTML = json.qty
           document.getElementById('subtotal').innerHTML = json.subtotal
+          document.getElementById('total').innerHTML = json.total
         },
         error: function (xhr, errmsg, err) {}
       })

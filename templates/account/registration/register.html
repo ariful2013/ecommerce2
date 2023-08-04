@@ -1,0 +1,41 @@
+{% extends '../../base.html' %}
+
+{% block title %}
+  Register
+{% endblock %}
+
+{% block content %}
+  <div class="container py-3">
+    <div class="row">
+      <div class="col-12 col-lg-7 mx-auto">
+        {% url 'account:register' as url_register %}
+        <form class="account-form p-4 rounded col-lg-10 mx-auto" action="{{ url_register }}" method="post">
+          {% csrf_token %}
+
+          <h3 class="mb-2 font-weight-bold">Create an account</h3>
+          <p class="mb-4">It's free and only takes a minute.</p>
+
+          {% for field in form %}
+            <div class="form-floating mb-1">
+              {{ field }}
+
+              <label for="{{ field.name }}">{{ field.label }}</label>
+
+              {% if field.errors %}
+                <div class="alert alert-danger mt-2" role="alert">{{ field.errors|striptags }}</div>
+              {% endif %}
+            </div>
+          {% endfor %}
+
+          <button class="btn btn-primary w-100 py-2 my-2" type="submit">Register</button>
+
+          <p class="text-center my-2">
+            {% url 'account:login' as url_login %}
+            <a href="{{ url_login }}">Already have an account?</a>
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript"></script>
+{% endblock %}

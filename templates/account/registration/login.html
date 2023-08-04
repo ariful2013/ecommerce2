@@ -1,0 +1,46 @@
+{% extends '../../base.html' %}
+
+{% block title %}
+  Login
+{% endblock %}
+
+{% block content %}
+  <div class="container py-3">
+    <div class="row">
+      <div class="col-12 col-lg-7 mx-auto">
+        {% url 'account:login' as url_login %}
+        <form class="account-form p-4 rounded col-lg-10 mx-auto" action="{{ url_login }}" method="post">
+          {% csrf_token %}
+
+          <h3 class="mb-2 font-weight-bold">Login to your Account</h3>
+          <p class="mb-4">Please login with your Credentials.</p>
+
+          {% if form.errors %}
+            <div class="alert alert-danger" role="alert">Error: Username or Password not correct!</div>
+          {% endif %}
+
+          {% for field in form %}
+            <div class="form-floating mb-1">
+              {{ field }}
+
+              <label for="{{ field.name }}">{{ field.label }}</label>
+            </div>
+          {% endfor %}
+
+          <button class="btn btn-primary w-100 py-2 my-2" type="submit">Sign In</button>
+
+          <p class="text-center my-2">
+            {% comment %} {% url 'account:register' as url_register %} {% endcomment %}
+            <a href="/account/password_reset/">Forgot your Password? <strong>Reset Password</strong></a>
+          </p>
+          <p class="text-center my-2">OR</p>
+          <p class="text-center my-2">
+            {% url 'account:register' as url_register %}
+            <a href="{{ url_register }}">Don't have an Account? <strong>Signup Now</strong></a>
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript"></script>
+{% endblock %}

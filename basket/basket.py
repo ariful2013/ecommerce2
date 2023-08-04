@@ -25,8 +25,21 @@ class Basket():
             item['total_price'] = item['price'] * item['qty']
             yield item
 
-    def get_total_price(self):
+    def get_subtotal_price(self):
         return sum(Decimal(item['price'])*item['qty'] for item in self.basket.values())
+
+    def get_total_price(self):
+
+        subtotal = sum(Decimal(item['price']) * item['qty']
+                       for item in self.basket.values())
+
+        if subtotal == 0:
+            shipping = Decimal(0.00)
+        else:
+            shipping = Decimal(11.50)
+
+        total = subtotal + Decimal(shipping)
+        return total
 
     def save(self):
         self.session.modified = True
@@ -54,3 +67,8 @@ class Basket():
         self.session.modified = True
         # Alternatively can Use save() function instead of self.session.modified = True
         # self.save()
+
+    def clear(self):
+        # Remove basket from session
+        del self.session['skey']
+        self.save()
